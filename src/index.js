@@ -5,6 +5,7 @@ import { handleUserSignUp } from "./controllers/user.controller.js";
 import {handleStore} from "./controllers/store.controller.js"
 import {handleReview} from "./controllers/review.controller.js"
 import { handleMission } from "./controllers/mission.controller.js";
+import { handleChallengeMemberMission } from "./controllers/attempt.controller.js"; // 미션 도전 핸들러 추가
 
 dotenv.config();
 
@@ -27,6 +28,9 @@ app.post("/api/v1/stores",handleStore);
 app.post("/api/v1/stores/review",handleReview);
 
 app.post("/api/v1/stores/mission", handleMission);
+
+app.post("/api/v1/missions/challenge", handleChallengeMemberMission); // 미션 도전 API 추가
+
 
 
 app.listen(port, () => {

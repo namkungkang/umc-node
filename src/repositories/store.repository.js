@@ -26,3 +26,11 @@ export const checkStoreExists = async (name, region_id) => {
   );
   return rows.length > 0; 
 };
+
+export const checkStoreExistsById = async (store_id) => {
+    const [rows] = await pool.query(
+        `SELECT id FROM umc.store WHERE id = ?`, 
+        [store_id]
+    );
+    return rows.length > 0; 
+};

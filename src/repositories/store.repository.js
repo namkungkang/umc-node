@@ -1,19 +1,21 @@
+// repositories/store.repository.js
 import { pool } from "../db.config.js";
 
-export const addStore = async (storeData) => {
-  // region_id가 존재하지 않으면 쿼리에서 생략
-  const query = `
-    INSERT INTO umc.store (name, address${storeData.region_id ? ', region_id' : ''}) 
-    VALUES (?, ?${storeData.region_id ? ', ?' : ''})
-  `;
-  
-  const params = [storeData.name, storeData.address];
-  
-  if (storeData.region_id) {
-    params.push(storeData.region_id);
-  }
+export const addStoreReview = async (reviewData) => {
+  const { member_id, store_id, body, score } = reviewData;
+  const [result] = await pool.query(
+    `INSERT INTO umc.review (member_id, store_id, body, score, created_at) VALUES (?, ?, ?, ?, NOW())`,
+    [member_id, store_id, body, score]
+  );
+  return result.insertId; // 새로 생성된 리뷰의 ID를 반환
+};
 
-  const [result] = await pool.query(query, params);
+// 기존의 store 관련 함수들
+export const addStore = async (storeData) => {
+  const [result] = await pool.query(
+    `INSERT INTO umc.store (region_id, name, address) VALUES (?, ?, ?)`,
+    [storeData.region_id, storeData.name, storeData.address]
+  );
   return result.insertId; 
 };
 
@@ -23,4 +25,4 @@ export const checkStoreExists = async (name, region_id) => {
     [name, region_id]
   );
   return rows.length > 0; 
-};  
+};

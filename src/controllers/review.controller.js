@@ -6,8 +6,8 @@ import { createReview } from '../services/review.service.js';
 export const handleReview = async (req, res) => {
   try {
     const reviewData = {
-      member_id: req.body.member_id, // 사용자의 ID
-      store_id: req.body.store_id,     // 가게의 ID
+      memberId: req.body.memberId, // 사용자의 ID
+      storeId: req.body.storeId,     // 가게의 ID
       body: req.body.body,              // 리뷰 내용
       score: req.body.score              // 리뷰 점수
     };

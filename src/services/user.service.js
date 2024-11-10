@@ -14,7 +14,7 @@ export const userSignUp = async (data) => {
     birth: data.birth,
     address: data.address,
     detailAddress: data.detailAddress,
-    phoneNumber: data.phoneNumber,
+    phone_num: data.phone_num,
   });
 
   if (joinUserId === null) {

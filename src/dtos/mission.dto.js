@@ -1,8 +1,8 @@
 export const bodyToMisson = (body) => {
     return {
-      store_id:body.store_id,
+      storeId:body.storeId,
       reward:body.reward,
       deadline:body.deadline,
-      misson_spec:body.misson_spec
+      mission_spec:body.mission_spec
     };
   };

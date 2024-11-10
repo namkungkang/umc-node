@@ -6,13 +6,22 @@ export const bodyToUser = (body) => {
       name: body.name,
       gender: body.gender,
       age:body.age,
+      birth:birth,
       address: body.address || "",
       detailAddress: body.detailAddress || "",
-      phoneNumber: body.phoneNumber,
+      phone_num: body.phone_num,
       preferences: body.preferences || [],
     };
   };
 
-  export const responseFromUser = (user, preferences) => {
-    return { user, preferences };
+  export const responseFromUser = ({ user, preferences }) => {
+    const preferFoods = preferences.map(
+      (preference) => preference.foodCategory.name
+    );
+  
+    return {
+      email: user.email,
+      name: user.name,
+      preferCategory: preferFoods,
+    };
   };

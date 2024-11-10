@@ -2,10 +2,15 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { handleUserSignUp } from "./controllers/user.controller.js";
-import {handleStore} from "./controllers/store.controller.js"
-import {handleReview} from "./controllers/review.controller.js"
+import { handleStore } from "./controllers/store.controller.js";
+import { handleReview } from "./controllers/review.controller.js";
 import { handleMission } from "./controllers/mission.controller.js";
 import { handleChallengeMemberMission } from "./controllers/attempt.controller.js"; // 미션 도전 핸들러 추가
+import {handleListStoreReviews} from "./controllers/store.controller.js"
+import {handleListMissions} from "./controllers/mission.controller.js";
+import {handleListInprogress} from "./controllers/attempt.controller.js";
+import {handleListComplete} from "./controllers/attempt.controller.js";
+
 
 dotenv.config();
 
@@ -21,17 +26,25 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+
 app.post("/api/v1/users/signup", handleUserSignUp);
 
-app.post("/api/v1/stores",handleStore);
+app.post("/api/v1/stores", handleStore);
 
-app.post("/api/v1/stores/review",handleReview);
+app.post("/api/v1/stores/review", handleReview);
 
 app.post("/api/v1/stores/mission", handleMission);
 
-app.post("/api/v1/missions/challenge", handleChallengeMemberMission); // 미션 도전 API 추가
+app.post("/api/v1/missions/challenge", handleChallengeMemberMission); 
 
+//ORM
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
+app.get("/api/v1/stores/:storeId/missions", handleListMissions);
+
+app.get("/api/v1/missions/inprogress", handleListInprogress);
+
+app.put("/api/v1/missions/:missionId/complete", handleListComplete);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

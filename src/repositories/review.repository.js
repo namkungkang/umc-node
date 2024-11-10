@@ -1,20 +1,28 @@
-import { pool } from "../db.config.js";
+import {prisma} from "../db.config.js";
 
-// 리뷰 추가
+
 export const addReview = async (reviewData) => {
-    const { member_id, store_id, body, score } = reviewData;
-    const [result] = await pool.query(
-      `INSERT INTO umc.review (member_id, store_id, body, score, created_at) VALUES (?, ?, ?, ?, NOW())`,
-      [member_id, store_id, body, score]
-    );
-    return result.insertId; // 새로 생성된 리뷰의 ID를 반환
+    const { memberId, storeId, body, score } = reviewData;
+    const review = await prisma.review.create({
+        data: {
+            memberId : memberId,
+            storeId : storeId,
+            body:body,
+            score:score,
+            createdAt : new Date(),
+        },
+    });
+    return review.id; 
   };
 
-// 특정 가게의 리뷰 조회 (선택 사항)
-export const getReviewsByStoreId = async (store_id) => {
-  const [rows] = await pool.query(
-    `SELECT * FROM umc.review WHERE store_id = ? ORDER BY created_at DESC`,
-    [store_id]
-  );
-  return rows; // 가게의 모든 리뷰를 반환
+export const getReviewsByStoreId = async (storeId) => {
+  const reviews = await prisma.review.findMany({
+    where: {
+        storeId : storeId,
+    },
+    orderBy: {
+        createdAt:"desc",
+    },
+  })
+  return reviews; 
 };

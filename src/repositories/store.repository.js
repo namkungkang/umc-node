@@ -1,36 +1,66 @@
-// repositories/store.repository.js
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 export const addStoreReview = async (reviewData) => {
   const { member_id, store_id, body, score } = reviewData;
-  const [result] = await pool.query(
-    `INSERT INTO umc.review (member_id, store_id, body, score, created_at) VALUES (?, ?, ?, ?, NOW())`,
-    [member_id, store_id, body, score]
-  );
-  return result.insertId; // 새로 생성된 리뷰의 ID를 반환
+  const review = await prisma.review.create({
+    data: {
+      member_id: member_id,
+      store_id: store_id,
+      body: body,
+      score: score,
+    },
+  });
+
+  return review.id;
 };
 
-// 기존의 store 관련 함수들
 export const addStore = async (storeData) => {
-  const [result] = await pool.query(
-    `INSERT INTO umc.store (region_id, name, address) VALUES (?, ?, ?)`,
-    [storeData.region_id, storeData.name, storeData.address]
-  );
-  return result.insertId; 
+    const { regionId, name, address, score } = storeData;
+  
+    const region = await prisma.region.findUnique({
+      where: { id: regionId }
+    });
+  
+    if (!region) {
+      region = await prisma.region.create({
+        data: {
+          name: "새로운 지역",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+  
+    const store = await prisma.store.create({
+      data: {
+        regionId: region.id,  
+        name: name,
+        address: address,
+        score: parseFloat(score), 
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+  
+    return store.id;
+  };
+  
+
+export const checkStoreExists = async (name, regionId) => {
+  const store = await prisma.store.findFirst({
+    where: {
+      name: name,
+      regionId: regionId,
+    },
+  });
+  return store !== null;
 };
 
-export const checkStoreExists = async (name, region_id) => {
-  const [rows] = await pool.query(
-    `SELECT id FROM umc.store WHERE name = ? AND region_id = ?`, 
-    [name, region_id]
-  );
-  return rows.length > 0; 
-};
-
-export const checkStoreExistsById = async (store_id) => {
-    const [rows] = await pool.query(
-        `SELECT id FROM umc.store WHERE id = ?`, 
-        [store_id]
-    );
-    return rows.length > 0; 
+export const checkStoreExistsById = async (storeId) => {
+  const store = await prisma.store.findFirst({
+    where: {
+      id: storeId,
+    },
+  });
+  return store !== null;
 };

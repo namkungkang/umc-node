@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { createStore } from '../services/store.service.js';
 import { listStoreReviews } from '../services/store.service.js';
+import { DuplicateStoreError } from '../errors.js';
 
 export const handleStore = async (req, res) => {
   try {
@@ -14,7 +15,19 @@ export const handleStore = async (req, res) => {
     const storeId = await createStore(storeData); 
     res.status(StatusCodes.CREATED).json({ id: storeId }); 
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message }); 
+    if (error instanceof DuplicateStoreError) {
+      return res.status(StatusCodes.CONFLICT).json({
+        resultType: "FAIL",
+        error: {
+          errorCode: error.errorCode,
+          reason : error.reason,
+          data: error.data,
+
+        },
+        success:null
+      })
+    }  
+  
   }
 };
 

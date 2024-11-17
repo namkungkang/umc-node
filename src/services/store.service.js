@@ -3,6 +3,7 @@ import {
   checkStoreExists,
 } from "../repositories/store.repository.js";
 import { prisma } from "../db.config.js";
+import { DuplicateStoreError } from "../errors.js";
 
 export const createStore = async (storeData) => {
   const storeExists = await checkStoreExists(
@@ -10,7 +11,10 @@ export const createStore = async (storeData) => {
     storeData.regionId
   );
   if (storeExists) {
-    throw new Error("지역에 이미 존재함");
+    throw new DuplicateStoreError("지역에 이미 존재함",{
+      name:storeData.name,
+      regionId : storeData.regionId,
+    });
   }
 
   const storeId = await addStore(storeData);

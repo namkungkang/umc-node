@@ -1,6 +1,7 @@
 import { createMission } from "../services/mission.service.js";
 import { getMissionsByStoreId } from "../services/mission.service.js";
-
+import { DuplicateMissionError } from "../errors.js";
+import { StatusCodes } from "http-status-codes";
 export const handleMission = async (req, res) => {
   try {
     const missionData = {
@@ -13,9 +14,17 @@ export const handleMission = async (req, res) => {
     const missionId = await createMission(missionData);
     res.status(201).json({ id: missionId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    if (error instanceof DuplicateMissionError) {
+      return res.status(StatusCodes.CONFLICT).json({
+        resultType: "FAIL",
+        error: {
+          errorCode: error.errorCode,
+          reason : error.reason,
+          
+        },
+        success:null
+      });
+    }}}
 
 export const handleListMissions = async (req, res) => {
   try {

@@ -1,6 +1,8 @@
 import { challengeMemberMission } from "../services/attempt.service.js";
 import { getMemberInProgressMissions } from "../services/attempt.service.js";
 import { getMemberCompleteMissions } from "../services/attempt.service.js";
+import { DuplicateAttemptError } from "../errors.js";
+import { StatusCodes } from "http-status-codes";
 
 export const handleChallengeMemberMission = async (req, res) => {
   try {
@@ -12,9 +14,17 @@ export const handleChallengeMemberMission = async (req, res) => {
     const attemptId = await challengeMemberMission(missionData);
     res.status(201).json({ id: attemptId });
   } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+    if (error instanceof DuplicateAttemptError) {
+      return res.status(StatusCodes.CONFLICT).json({
+        resultType: "FAIL",
+        error: {
+          errorCode: error.errorCode,
+          reason : error.reason,
+          
+        },
+        success:null
+      });
+    }}}
 
 export const handleListInprogress = async (req, res) => {
   try {

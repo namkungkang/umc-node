@@ -1,10 +1,13 @@
 import { addMemberMission, checkMemberMissionExists } from '../repositories/attempt.repository.js';
 import {prisma} from '../db.config.js';
+import { DuplicateAttemptError } from '../errors.js';
+
 
 export const challengeMemberMission = async (missionData) => {
     const attemptExists = await checkMemberMissionExists(missionData.memberId, missionData.missionId);
     if (attemptExists) {
-        throw new Error('이미 도전했던 미션입니다.');
+      throw new DuplicateAttemptError("이미 도전했던 미션임")
+
     }
 
     const attemptId = await addMemberMission(missionData);

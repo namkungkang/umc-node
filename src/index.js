@@ -84,7 +84,7 @@ app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
 app.get("/api/v1/stores/:storeId/missions", handleListMissions);
 
-app.get("/api/v1/missions/inprogress", handleListInprogress);
+app.get("/api/v1/missions/stores/:storeId/inprogress", handleListInprogress);
 
 app.put("/api/v1/missions/:missionId/complete", handleListComplete);
 

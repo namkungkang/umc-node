@@ -92,10 +92,12 @@ export const handleChallengeMemberMission = async (req, res) => {
 };
 
 export const handleListInprogress = async (req, res) => {
-  /*
-    #swagger.summary = '가게 미션 목록 조회 API';
+  try {
+    const { memberId } = req.query;
+    /*
+    #swagger.summary = '상점 리뷰 목록 조회 API';
     #swagger.responses[200] = {
-      description: "가게 미션 목록 조회 성공 응답",
+      description: "상점 리뷰 목록 조회 성공 응답",
       content: {
         "application/json": {
           schema: {
@@ -104,8 +106,7 @@ export const handleListInprogress = async (req, res) => {
               resultType: { type: "string", example: "SUCCESS" },
               error: { type: "object", nullable: true, example: null },
               success: {
-            
-              type: "object",
+                type: "object",
                 properties: {
                   data: {
                     type: "array",
@@ -113,11 +114,9 @@ export const handleListInprogress = async (req, res) => {
                       type: "object",
                       properties: {
                         id: { type: "number" },
-                        store: { type: "object", properties: { id: { type: "number" }, name: { type: "string" } } },
-                        reward: {type:"number"},
-                        deadline : {type:"string", format : "date"},
-                        missionSpec : {type: "string"}
-                        
+                        memberId : {type : "number"},
+                        missionId : {type : "number"},
+                        status : {type : "string"}
                         }
                     }
                   },
@@ -130,10 +129,6 @@ export const handleListInprogress = async (req, res) => {
       }
     };
   */
-
-  try {
-    const { memberId } = req.query;
-
     if (!memberId) {
       return res.status(400).json({ message: "memberID 없음." });
     }
@@ -154,7 +149,41 @@ export const handleListComplete = async (req, res) => {
   try {
     const { missionId } = req.params;
     const { memberId } = req.body;
-
+    /*
+    #swagger.summary = '진행중인 미션 완료로 바꾸기 API';
+    #swagger.responses[200] = {
+      description: "진행중인 미션 완료로 바꾸기",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "SUCCESS" },
+              error: { type: "object", nullable: true, example: null },
+              success: {
+                type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "number" },
+                        memberId : {type : "number"},
+                        missionId : {type : "number"},
+                        status : {type : "string"}
+                       }
+                    }
+                  },
+                  pagination: { type: "object", properties: { cursor: { type: "number", nullable: true } }}
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+  */
     console.log("memberId:", memberId);
     console.log("missionId:", missionId);
 

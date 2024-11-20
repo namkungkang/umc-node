@@ -10,6 +10,70 @@ export const handleChallengeMemberMission = async (req, res) => {
       memberId: req.body.memberId,
       missionId: req.body.missionId,
     };
+    /*
+      #swagger.summary = '미션 도중 추가 API';
+      #swagger.requestBody = {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                memberId: { type: "number" },
+                missionId: { type: "number" },
+              
+                }
+              }
+            }
+          }
+        }
+      };
+      #swagger.responses[200] = {
+        description: "미션 도중 추가 성공 응답",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                resultType: { type: "string", example: "SUCCESS" },
+                error: { type: "object", nullable: true, example: null },
+                success: {
+                  type: "object",
+                  properties: {
+                  id: { type: "number" },
+                  memberId: { type: "number" },
+                  missionId: { type: "number" },
+                  status : {type:"string"},
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+      #swagger.responses[400] = {
+        description: "미션 도중 추가 실패 응답",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                resultType: { type: "string", example: "FAIL" },
+                error: {
+                  type: "object",
+                  properties: {
+                    errorCode: { type: "string", example: "400_ATTEMPT_1" },
+                    reason: { type: "string" },
+                    data: { type: "object" }
+                  }
+                },
+                success: { type: "object", nullable: true, example: null }
+              }
+            }
+          }
+        }
+      };
+    */
 
     const attemptId = await challengeMemberMission(missionData);
     res.status(201).json({ id: attemptId });
@@ -19,14 +83,54 @@ export const handleChallengeMemberMission = async (req, res) => {
         resultType: "FAIL",
         error: {
           errorCode: error.errorCode,
-          reason : error.reason,
-          
+          reason: error.reason,
         },
-        success:null
+        success: null,
       });
-    }}}
+    }
+  }
+};
 
 export const handleListInprogress = async (req, res) => {
+  /*
+    #swagger.summary = '가게 미션 목록 조회 API';
+    #swagger.responses[200] = {
+      description: "가게 미션 목록 조회 성공 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: { type: "string", example: "SUCCESS" },
+              error: { type: "object", nullable: true, example: null },
+              success: {
+            
+              type: "object",
+                properties: {
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "number" },
+                        store: { type: "object", properties: { id: { type: "number" }, name: { type: "string" } } },
+                        reward: {type:"number"},
+                        deadline : {type:"string", format : "date"},
+                        missionSpec : {type: "string"}
+                        
+                        }
+                    }
+                  },
+                  pagination: { type: "object", properties: { cursor: { type: "number", nullable: true } }}
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+  */
+
   try {
     const { memberId } = req.query;
 
@@ -37,9 +141,7 @@ export const handleListInprogress = async (req, res) => {
     const inProgressMissions = await getMemberInProgressMissions(memberId);
 
     if (inProgressMissions.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "진행중인 미션없음." });
+      return res.status(404).json({ message: "진행중인 미션없음." });
     }
 
     return res.status(200).json({ inProgressMissions });
@@ -57,9 +159,7 @@ export const handleListComplete = async (req, res) => {
     console.log("missionId:", missionId);
 
     if (!memberId || !missionId) {
-      return res
-        .status(400)
-        .json({ message: "MemberId Mission Id 필요함." });
+      return res.status(400).json({ message: "MemberId Mission Id 필요함." });
     }
 
     const updatedMission = await getMemberCompleteMissions(
@@ -67,9 +167,7 @@ export const handleListComplete = async (req, res) => {
       parseInt(missionId)
     );
 
-    return res
-      .status(200)
-      .json({ message: "미션 성공.", updatedMission });
+    return res.status(200).json({ message: "미션 성공.", updatedMission });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "서버에러" });

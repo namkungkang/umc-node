@@ -2,59 +2,75 @@ import { prisma } from "../db.config.js";
 
 // User 데이터 삽입
 export const addUser = async (data) => {
-    const member = await prisma.member.findFirst({ where: { email: data.email } });
-    if (member) {
-      return null;
-    }
-  
-    const created = await prisma.member.create({
-        data: {
-          email: data.email,
-          name: data.name,
-          gender: data.gender,
-          birth: new Date(data.birth), // birth는 Date로 변환해야 합니다.
-          address: data.address,
-          detailAddress: data.detailAddress || "",
-          phone_num: data.phone_num, // phonenum 필드를 정확히 전달해야 합니다.
-        },
-      });
-    
-      return created.id; // 생성된 사용자 ID 반환
-    };
-  // 사용자 정보 얻기
-  export const getUser = async (memberId) => {
-    const member = await prisma.member.findFirstOrThrow({ where: { id: memberId } });
-    return member;
-    
-  };
-  
-  // 음식 선호 카테고리 매핑
-  export const setPreference = async (memberId, foodCategoryId) => {
-    await prisma.memberPrefer.create({
-      data: {
-        memberId: memberId,
-        foodCategoryId: foodCategoryId,
-      },
-    });
-  };
-  
-  // 사용자 선호 카테고리 반환
-  export const getUserPreferencesByUserId = async (memberId) => {
-    const preferences = await prisma.memberFavorCategory.findMany({
-      select: {
-        id: true,
-        memberId: true,
-        foodCategoryId: true,
-        foodCategory: true,
-      },
-      where: { memberId: memberId },
-      orderBy: { foodCategoryId: "asc" },
-    });
-  
-    return preferences;
+  const member = await prisma.member.findFirst({
+    where: { email: data.email },
+  });
+  if (member) {
+    return null;
+  }
 
-  };
-  
+  const created = await prisma.member.create({
+    data: {
+      email: data.email,
+      name: data.name,
+      gender: data.gender,
+      birth: new Date(data.birth), 
+      address: data.address,
+      detailAddress: data.detailAddress || "",
+      phone_num: data.phone_num, 
+    },
+  });
+
+  return created.id; 
+};
+// 사용자 정보 얻기
+export const getUser = async (memberId) => {
+  const member = await prisma.member.findFirstOrThrow({
+    where: { id: memberId },
+  });
+  return member;
+};
+
+export const updateUser = async (data) => {
+  return await prisma.member.update({
+    where: { email: data.email },
+    data: {
+      name: data.name,
+      gender: data.gender,
+      birth: new Date(data.birth), 
+      address: data.address,
+      detailAddress: data.detailAddress || "",
+      phone_num: data.phone_num, 
+    },
+  });
+};
+
+// 음식 선호 카테고리 매핑
+export const setPreference = async (memberId, foodCategoryId) => {
+  await prisma.memberPrefer.create({
+    data: {
+      memberId: memberId,
+      foodCategoryId: foodCategoryId,
+    },
+  });
+};
+
+// 사용자 선호 카테고리 반환
+export const getUserPreferencesByUserId = async (memberId) => {
+  const preferences = await prisma.memberFavorCategory.findMany({
+    select: {
+      id: true,
+      memberId: true,
+      foodCategoryId: true,
+      foodCategory: true,
+    },
+    where: { memberId: memberId },
+    orderBy: { foodCategoryId: "asc" },
+  });
+
+  return preferences;
+};
+
 export const getAllStoreReviews = async (storeId, cursor) => {
   const reviews = await prisma.memberStoreReview.findMany({
     select: { id: true, content: true, store: true, member: true },
@@ -65,9 +81,17 @@ export const getAllStoreReviews = async (storeId, cursor) => {
 
   return reviews;
 };
-  
-  //   const conn = await pool.getConnection();
- 
+
+// user.repository.js
+export const getUserByEmail = async (email) => {
+  return await prisma.member.findUnique({
+    where: { email: email },
+  });
+};
+
+
+//   const conn = await pool.getConnection();
+
 //   try {
 //     const [confirm] = await pool.query(
 //       `SELECT EXISTS(SELECT 1 FROM member WHERE email = ?) as isExistEmail;`,

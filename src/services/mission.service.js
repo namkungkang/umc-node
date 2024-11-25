@@ -22,7 +22,7 @@ export const getMissionsByStoreId = async (storeId) => {
       },
       orderBy: {
         createdAt: "desc", 
-      },
+      }, 
     });
     return missions; 
-  };
+  }; 

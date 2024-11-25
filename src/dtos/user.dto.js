@@ -25,3 +25,19 @@ export const bodyToUser = (body) => {
       preferCategory: preferFoods,
     };
   };
+
+  export const UpdateUser = (body) => {
+    const birth = new Date(body.birth);
+  
+    return {
+      email: body.email,
+      name: body.name,
+      gender: body.gender,
+      age:body.age,
+      birth:birth,
+      address: body.address || "",
+      detailAddress: body.detailAddress || "",
+      phone_num: body.phone_num,
+      preferences: body.preferences || [],
+    };
+  };
